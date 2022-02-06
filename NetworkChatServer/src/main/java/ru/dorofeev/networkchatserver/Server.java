@@ -22,7 +22,7 @@ public class Server {
 
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("Сервер запущен");
+            System.out.println("Сервер чата запущен");
 
             while (true) {
                 processClientConnection(serverSocket);
@@ -30,6 +30,8 @@ public class Server {
 
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            authService.releaseResources();
         }
     }
 
@@ -45,15 +47,15 @@ public class Server {
     public synchronized void sendPublicMessage(ClientHandler sender, String message) throws IOException {
         for (ClientHandler client : clientHandlers) {
             if (client != sender) {
-                client.sendCommand(Command.publicMessageCommand(sender.getUser().getLogin(), message));
+                client.sendCommand(Command.publicMessageCommand(sender.getUser().getUserName(), message));
             }
         }
     }
 
     public synchronized void sendPrivateMessage(ClientHandler sender, String recipient, String message) throws IOException {
         for (ClientHandler client : clientHandlers) {
-            if (client != sender && client.getUser().getLogin().equals(recipient)) {
-                client.sendCommand(Command.privateMessageCommand(sender.getUser().getLogin(), recipient, message));
+            if (client != sender && client.getUser().getUserName().equals(recipient)) {
+                client.sendCommand(Command.privateMessageCommand(sender.getUser().getUserName(), recipient, message));
             }
         }
     }
@@ -68,11 +70,11 @@ public class Server {
         notifyClientUserListUpdated();
     }
 
-    private synchronized void notifyClientUserListUpdated() throws IOException {
+    public synchronized void notifyClientUserListUpdated() throws IOException {
         List<String> userListOnline = new ArrayList<>();
 
         for (ClientHandler client : clientHandlers) {
-            userListOnline.add(client.getUser().getLogin());
+            userListOnline.add(client.getUser().getUserName());
         }
 
         for (ClientHandler client : clientHandlers) {
@@ -82,7 +84,7 @@ public class Server {
 
     public boolean isAlreadyAuth(String login) {
         for (ClientHandler client : clientHandlers) {
-            if (client.getUser().getLogin().equals(login)) {
+            if (client.getUser().getUserName().equals(login)) {
                 return true;
             }
         }

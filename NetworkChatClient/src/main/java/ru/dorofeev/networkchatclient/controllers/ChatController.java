@@ -1,9 +1,9 @@
 package ru.dorofeev.networkchatclient.controllers;
 
 import javafx.collections.FXCollections;
+import javafx.scene.control.TextInputDialog;
 import ru.dorofeev.networkchatclient.ChatApplication;
 import ru.dorofeev.networkchatclient.client.Client;
-import ru.dorofeev.networkchatclient.client.CommandListener;
 import ru.dorofeev.networkchatcommon.CommandType;
 import ru.dorofeev.networkchatcommon.commands.ErrorCommandData;
 import ru.dorofeev.networkchatcommon.commands.PrivateMessageCommandData;
@@ -18,6 +18,7 @@ import ru.dorofeev.networkchatcommon.commands.UpdateUserListCommandData;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Optional;
 
 public class ChatController {
 
@@ -86,6 +87,26 @@ public class ChatController {
             } catch (IOException e) {
                 application.showError("Ошибка отравки данных");
             }
+        }
+    }
+
+    @FXML
+    public void onActionChangeUserName() {
+        TextInputDialog editDialog = new TextInputDialog();
+        editDialog.setTitle("Изменить ник");
+        editDialog.setHeaderText("Введите новый ник");
+        editDialog.setContentText("Новый ник:");
+
+        Optional<String> result = editDialog.showAndWait();
+        if (result.isPresent()) {
+            try {
+                String newUserName = result.get();
+                client.changeUserName(newUserName);
+                application.setUserName(newUserName);
+            } catch (IOException e) {
+                application.showError("Ошибка отравки данных");
+            }
+
         }
     }
 
