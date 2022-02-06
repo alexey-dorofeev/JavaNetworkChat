@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.dorofeev.networkchatclient.controllers.ChatController">
+   <top>
+      <Label text="Онлайн-чат" BorderPane.alignment="CENTER" />
+   </top>
+   <center>
+      <TextArea fx:id="textAreaChat" editable="false" focusTraversable="false" prefHeight="400.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+   </center>
+   <bottom>
+      <VBox prefHeight="40.0">
+         <HBox prefHeight="25.0" BorderPane.alignment="CENTER">
+               <TextField fx:id="textFieldMessage" onAction="#onActionSendMessage" HBox.hgrow="ALWAYS" />
+               <Button mnemonicParsing="false" onAction="#onActionSendMessage" text="Отправить" />
+         </HBox>
+         <HBox prefHeight="15.0" BorderPane.alignment="CENTER">
+               <Label text="Для отправки приватного сообщения выберите в списке нужного абонента" textFill="BLUE">
+                  <font>
+                     <Font size="10.0" />
+                  </font></Label>
+         </HBox>
+      </VBox>
+   </bottom>
+   <left>
+      <ListView fx:id="listViewChatUsers" focusTraversable="false" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+   </left>
+</BorderPane>
