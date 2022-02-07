@@ -1,7 +1,7 @@
 package ru.dorofeev.networkchatserver;
 
 import ru.dorofeev.networkchatcommon.commands.UpdateUserNameCommandData;
-import ru.dorofeev.networkchatserver.auth.User;
+import ru.dorofeev.networkchatcommon.auth.User;
 import ru.dorofeev.networkchatcommon.Command;
 import ru.dorofeev.networkchatcommon.CommandType;
 import ru.dorofeev.networkchatcommon.commands.AuthCommandData;
@@ -90,7 +90,7 @@ public class ClientHandler {
                 } else if (server.isAlreadyAuth(login)) {
                     sendCommand(Command.errorCommand("Такой пользователь уже аутентифицирован"));
                 } else {
-                    sendCommand(Command.authOkCommand(user.getUserName()));
+                    sendCommand(Command.authOkCommand(user));
                     server.subscribe(this);
                     System.out.printf("Пользователь %s аутентифицирован%n", user.getUserName());
                     return;

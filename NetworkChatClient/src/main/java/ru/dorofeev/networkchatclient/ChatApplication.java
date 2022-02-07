@@ -11,6 +11,9 @@ import javafx.stage.Stage;
 import ru.dorofeev.networkchatclient.client.Client;
 import ru.dorofeev.networkchatclient.controllers.AuthController;
 import ru.dorofeev.networkchatclient.controllers.ChatController;
+import ru.dorofeev.networkchatclient.history.HistoryToFileService;
+import ru.dorofeev.networkchatclient.history.IHistoryService;
+import ru.dorofeev.networkchatcommon.auth.User;
 
 import java.io.IOException;
 
@@ -19,6 +22,7 @@ public class ChatApplication extends Application {
     public static final int SERVER_PORT = 8181;
 
     Client client;
+    private IHistoryService history;
 
     private String userName;
 
@@ -38,6 +42,8 @@ public class ChatApplication extends Application {
             client.close();
             System.exit(1);
         }
+
+        history = new HistoryToFileService();
 
         chatStage = stage;
         chatStage.setTitle("Онлайн-чат");
@@ -72,9 +78,11 @@ public class ChatApplication extends Application {
         alert.showAndWait();
     }
 
-    public void switchToChatStage(String userName) {
+    public void switchToChatStage(User user) {
         chatController.initClientHandler(client);
-        setUserName(userName);
+        chatController.initHistory(history, user.getLogin());
+
+        setUserName(user.getUserName());
         authStage.close();
         chatStage.show();
     }
@@ -82,6 +90,9 @@ public class ChatApplication extends Application {
     public void exitApplication() {
         if (client != null) {
             client.close();
+        }
+        if (history != null) {
+            history.close();
         }
         Platform.exit();
     }

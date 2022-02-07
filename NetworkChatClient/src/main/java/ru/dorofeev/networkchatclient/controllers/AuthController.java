@@ -31,7 +31,7 @@ public class AuthController {
                 AuthOkCommandData data = (AuthOkCommandData) command.getData();
                 Platform.runLater(
                         () -> {
-                            application.switchToChatStage(data.getUserName());
+                            application.switchToChatStage(data.getUser());
                             client.removeCommandListener(listener);
                         }
                 );

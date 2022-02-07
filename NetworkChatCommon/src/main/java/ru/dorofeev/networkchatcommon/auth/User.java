@@ -1,12 +1,13 @@
-package ru.dorofeev.networkchatserver.auth;
+package ru.dorofeev.networkchatcommon.auth;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class User {
+public class User implements Serializable {
 
     private final Long id;
     private final String login;
-    private final String password;
+    private final transient String password;
     private String userName;
 
     public User(Long id, String userName, String login, String password ) {
@@ -26,6 +27,10 @@ public class User {
 
     public String getUserName() {
         return userName;
+    }
+
+    public String getLogin() {
+        return login;
     }
 
     public Long getId() {
