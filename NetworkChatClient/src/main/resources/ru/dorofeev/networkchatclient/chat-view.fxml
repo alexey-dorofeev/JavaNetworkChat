@@ -26,6 +26,11 @@
       </VBox>
    </bottom>
    <left>
-      <ListView fx:id="listViewChatUsers" focusTraversable="false" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button mnemonicParsing="false" onAction="#onActionChangeUserName" prefHeight="25.0" prefWidth="107.0" text="Изменить ник" textAlignment="CENTER" />
+            <ListView fx:id="listViewChatUsers" focusTraversable="false" />
+         </children>
+      </VBox>
    </left>
 </BorderPane>

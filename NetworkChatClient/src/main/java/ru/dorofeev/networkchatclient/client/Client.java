@@ -78,6 +78,10 @@ public class Client {
         sendCommand(Command.privateMessageCommand(sender, recipient, message));
     }
 
+    public void changeUserName(String newUserName) throws IOException {
+        sendCommand(Command.updateUserNameCommand(newUserName));
+    }
+
     private void sendCommand(Command command) throws IOException {
         try {
             outStream.writeObject(command);

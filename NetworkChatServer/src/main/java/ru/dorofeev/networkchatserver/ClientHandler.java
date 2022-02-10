@@ -1,5 +1,6 @@
 package ru.dorofeev.networkchatserver;
 
+import ru.dorofeev.networkchatcommon.commands.UpdateUserNameCommandData;
 import ru.dorofeev.networkchatserver.auth.User;
 import ru.dorofeev.networkchatcommon.Command;
 import ru.dorofeev.networkchatcommon.CommandType;
@@ -49,7 +50,7 @@ public class ClientHandler {
                 }
                 executor.shutdownNow();
 
-                if(user != null) {
+                if (user != null) {
                     waitCommands();
                 }
             } catch (IOException e) {
@@ -89,9 +90,9 @@ public class ClientHandler {
                 } else if (server.isAlreadyAuth(login)) {
                     sendCommand(Command.errorCommand("Такой пользователь уже аутентифицирован"));
                 } else {
-                    sendCommand(Command.authOkCommand(user.getLogin()));
+                    sendCommand(Command.authOkCommand(user.getUserName()));
                     server.subscribe(this);
-                    System.out.printf("Пользователь %s аутентифицирован%n", user.getLogin());
+                    System.out.printf("Пользователь %s аутентифицирован%n", user.getUserName());
                     return;
                 }
             }
@@ -114,7 +115,7 @@ public class ClientHandler {
     }
 
     private void waitCommands() throws IOException {
-        System.out.printf("Ожидаем сообщений от клиента %s...%n", user.getLogin());
+        System.out.printf("Ожидаем сообщений от клиента %s...%n", user.getUserName());
         while (true) {
 
             Command command = readCommand();
@@ -122,11 +123,11 @@ public class ClientHandler {
                 continue;
             }
 
-            System.out.printf("Сообщение от клиента %s: %s%n", user.getLogin(), command);
+            System.out.printf("Сообщение от клиента %s: %s%n", user.getUserName(), command);
 
             switch (command.getType()) {
                 case END -> {
-                    System.out.printf("Соединение разорвано по команде от клиента %s%n", user.getLogin());
+                    System.out.printf("Соединение разорвано по команде от клиента %s%n", user.getUserName());
                     return;
                 }
                 case PRIVATE_MESSAGE -> {
@@ -136,6 +137,11 @@ public class ClientHandler {
                 case PUBLIC_MESSAGE -> {
                     PublicMessageCommandData data = (PublicMessageCommandData) command.getData();
                     server.sendPublicMessage(this, data.getMessage());
+                }
+                case UPDATE_USERNAME -> {
+                    UpdateUserNameCommandData data = (UpdateUserNameCommandData) command.getData();
+                    server.getAuthService().setNewUserName(user, data.getNewUserName());
+                    server.notifyClientUserListUpdated();
                 }
             }
         }

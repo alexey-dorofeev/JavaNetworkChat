@@ -74,8 +74,7 @@ public class ChatApplication extends Application {
 
     public void switchToChatStage(String userName) {
         chatController.initClientHandler(client);
-        this.userName = userName;
-        chatStage.setTitle("Онлайн-чат: " + this.userName);
+        setUserName(userName);
         authStage.close();
         chatStage.show();
     }
@@ -89,6 +88,11 @@ public class ChatApplication extends Application {
 
     public String getUserName() {
         return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+        chatStage.setTitle("Онлайн-чат: " + this.userName);
     }
 
     public static void main(String[] args) {

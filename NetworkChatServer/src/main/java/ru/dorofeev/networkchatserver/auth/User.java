@@ -4,16 +4,36 @@ import java.util.Objects;
 
 public class User {
 
+    private final Long id;
     private final String login;
     private final String password;
+    private String userName;
 
-    public User(String login, String password) {
+    public User(Long id, String userName, String login, String password ) {
+        this.id = id;
+        this.userName = userName;
         this.login = login;
         this.password = password;
+
+    }
+    public User(Long id, String userName, String login) {
+        this(id, userName,  login, null);
     }
 
-    public String getLogin() {
-        return login;
+    public User(String login, String password) {
+        this(null, null,  login, password);
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     @Override
