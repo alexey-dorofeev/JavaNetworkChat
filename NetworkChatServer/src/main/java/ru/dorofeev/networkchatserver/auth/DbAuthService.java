@@ -1,5 +1,7 @@
 package ru.dorofeev.networkchatserver.auth;
 
+import ru.dorofeev.networkchatcommon.auth.User;
+
 import java.sql.*;
 
 public class DbAuthService implements IAuthService {
