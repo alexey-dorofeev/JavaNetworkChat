@@ -8,12 +8,15 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server {
 
     private final int port;
     private final IAuthService authService;
     private final List<ClientHandler> clientHandlers = new ArrayList<>();
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     public Server(int port, IAuthService authService) {
         this.port = port;
@@ -32,6 +35,7 @@ public class Server {
             e.printStackTrace();
         } finally {
             authService.releaseResources();
+            executorService.shutdown();
         }
     }
 
@@ -93,5 +97,9 @@ public class Server {
 
     public IAuthService getAuthService() {
         return authService;
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
     }
 }

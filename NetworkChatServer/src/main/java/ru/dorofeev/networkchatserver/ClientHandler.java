@@ -31,71 +31,74 @@ public class ClientHandler {
         inStream = new ObjectInputStream(clientSocket.getInputStream());
         outStream = new ObjectOutputStream(clientSocket.getOutputStream());
 
-        new Thread(() -> {
-            try {
-                ExecutorService executor = Executors.newSingleThreadExecutor();
-                Future<?> future = executor.submit(() -> {
+        server.getExecutorService().execute(
+                () -> {
                     try {
                         waitAuth();
+                        if (user != null) {
+                            waitCommands();
+                        }
                     } catch (IOException e) {
                         System.err.println("Клиент разорвал соединение");
+                    } finally {
+                        try {
+                            closeConnection();
+                        } catch (IOException e) {
+                            System.err.println("Ошибка при закрытии соединения");
+                        }
                     }
-                });
+                }
+        );
 
-                try {
-                    future.get(TIMEOUT_TO_AUTH, TimeUnit.SECONDS);
-                } catch (TimeoutException | InterruptedException | ExecutionException e) {
-                    future.cancel(true);
-                    System.err.println("Клиент не авторизовался за отведенный таймаут");
-                }
-                executor.shutdownNow();
-
-                if (user != null) {
-                    waitCommands();
-                }
-            } catch (IOException e) {
-                System.err.println("Клиент разорвал соединение");
-            } finally {
-                try {
-                    closeConnection();
-                } catch (IOException e) {
-                    System.err.println("Ошибка при закрытии соединения");
-                }
-            }
-        }
-        ).start();
     }
 
-    private void waitAuth() throws IOException {
-        System.out.println("Ожидаем аутентификации клиента...");
-        while (true) {
+    private void waitAuth() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<?> future = executor.submit(() -> {
+            try {
+                System.out.println("Ожидаем аутентификации клиента...");
+                while (true) {
 
-            Command command = readCommand();
-            if (command == null) {
-                continue;
-            }
+                    Command command = readCommand();
+                    if (command == null) {
+                        continue;
+                    }
 
-            if (command.getType() == CommandType.AUTH) {
+                    if (command.getType() == CommandType.AUTH) {
 
-                AuthCommandData authCommandData = (AuthCommandData) command.getData();
+                        AuthCommandData authCommandData = (AuthCommandData) command.getData();
 
-                System.out.printf("Попытка аутентификации: %s%n", command);
+                        System.out.printf("Попытка аутентификации: %s%n", command);
 
-                String login = authCommandData.getLogin();
-                String password = authCommandData.getPassword();
+                        String login = authCommandData.getLogin();
+                        String password = authCommandData.getPassword();
 
-                user = server.getAuthService().auth(login, password);
-                if (user == null) {
-                    sendCommand(Command.errorCommand("Неверный(е) логин и(или) пароль"));
-                } else if (server.isAlreadyAuth(login)) {
-                    sendCommand(Command.errorCommand("Такой пользователь уже аутентифицирован"));
-                } else {
-                    sendCommand(Command.authOkCommand(user));
-                    server.subscribe(this);
-                    System.out.printf("Пользователь %s аутентифицирован%n", user.getUserName());
-                    return;
+                        User authUser = server.getAuthService().auth(login, password);
+                        if (authUser == null) {
+                            sendCommand(Command.errorCommand("Неверный(е) логин и(или) пароль"));
+                        } else if (server.isAlreadyAuth(login)) {
+                            sendCommand(Command.errorCommand("Такой пользователь уже аутентифицирован"));
+                        } else {
+                            sendCommand(Command.authOkCommand(authUser));
+                            user = authUser;
+                            server.subscribe(this);
+                            System.out.printf("Пользователь %s аутентифицирован%n", authUser.getUserName());
+                            return;
+                        }
+                    }
                 }
+            } catch (IOException e) {
+                System.err.println("Клиент разорвал во соединение во время аутентификации");
             }
+        });
+
+        try {
+            future.get(TIMEOUT_TO_AUTH, TimeUnit.SECONDS);
+        } catch (TimeoutException | InterruptedException | ExecutionException e) {
+            future.cancel(true);
+            System.err.println("Клиент не аутентифицировался за отведенный таймаут");
+        } finally {
+            executor.shutdownNow();
         }
     }
 
