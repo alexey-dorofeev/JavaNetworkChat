@@ -1,16 +1,18 @@
 package ru.dorofeev.networkchatcommon.commands;
 
+import ru.dorofeev.networkchatcommon.auth.User;
+
 import java.io.Serializable;
 
 public class AuthOkCommandData implements Serializable {
 
-    private final String userName;
+    private final User user;
 
-    public AuthOkCommandData(String userName) {
-        this.userName = userName;
+    public AuthOkCommandData(User user) {
+        this.user = user;
     }
 
-    public String getUserName() {
-        return userName;
+    public User getUser() {
+        return user;
     }
 }

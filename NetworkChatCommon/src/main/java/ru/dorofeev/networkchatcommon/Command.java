@@ -1,5 +1,6 @@
 package ru.dorofeev.networkchatcommon;
 
+import ru.dorofeev.networkchatcommon.auth.User;
 import ru.dorofeev.networkchatcommon.commands.*;
 
 import java.io.Serializable;
@@ -25,9 +26,9 @@ public class Command implements Serializable {
         return command;
     }
 
-    public static Command authOkCommand(String username) {
+    public static Command authOkCommand(User user) {
         Command command = new Command();
-        command.data = new AuthOkCommandData(username);
+        command.data = new AuthOkCommandData(user);
         command.type = CommandType.AUTH_OK;
         return command;
     }

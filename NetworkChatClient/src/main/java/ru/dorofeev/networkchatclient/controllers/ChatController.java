@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.scene.control.TextInputDialog;
 import ru.dorofeev.networkchatclient.ChatApplication;
 import ru.dorofeev.networkchatclient.client.Client;
+import ru.dorofeev.networkchatclient.history.IHistoryService;
 import ru.dorofeev.networkchatcommon.CommandType;
 import ru.dorofeev.networkchatcommon.commands.ErrorCommandData;
 import ru.dorofeev.networkchatcommon.commands.PrivateMessageCommandData;
@@ -30,6 +31,7 @@ public class ChatController {
     public ListView<String> listViewChatUsers;
 
     private Client client;
+    private IHistoryService history;
     private ChatApplication application;
 
     public void initClientHandler(Client client) {
@@ -111,7 +113,16 @@ public class ChatController {
     }
 
     private void appendMessage(String sender, String message) {
-        textAreaChat.appendText(DateFormat.getDateTimeInstance().format(new Date()) + " " + sender + ": " + message);
-        textAreaChat.appendText(System.lineSeparator());
+        String formattedMessage = DateFormat.getDateTimeInstance().format(new Date()) + " " + sender + ": " + message + System.lineSeparator();
+        textAreaChat.appendText(formattedMessage);
+        history.saveMessageToHistory(formattedMessage);
+    }
+
+    public void initHistory(IHistoryService history, String login) {
+        this.history = history;
+        this.history.init(login);
+        for (String message : this.history.loadFromHistory(100)) {
+            textAreaChat.appendText(message + System.lineSeparator());
+        }
     }
 }
