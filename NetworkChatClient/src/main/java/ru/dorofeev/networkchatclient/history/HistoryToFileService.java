@@ -26,7 +26,7 @@ public class HistoryToFileService implements IHistoryService {
 
     @Override
     public List<String> loadFromHistory(int rowCount) {
-        ArrayList<String> messages = new ArrayList<>();
+        List<String> messages = new ArrayList<>();
 
         try (ReversedLinesFileReader reversedLinesFileReader = new ReversedLinesFileReader(file)) {
             int counter = 0;
