@@ -74,7 +74,15 @@ public class ChatApplication extends Application {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.initOwner(chatStage);
         alert.setTitle("Ошибка");
-        alert.setContentText(message);
+        alert.setHeaderText(message);
+        alert.showAndWait();
+    }
+
+    public void showInfo(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.initOwner(chatStage);
+        alert.setTitle("Онлайн-чат");
+        alert.setHeaderText(message);
         alert.showAndWait();
     }
 
@@ -104,6 +112,10 @@ public class ChatApplication extends Application {
     public void setUserName(String userName) {
         this.userName = userName;
         chatStage.setTitle("Онлайн-чат: " + this.userName);
+    }
+
+    public Stage getChatStage() {
+        return chatStage;
     }
 
     public static void main(String[] args) {

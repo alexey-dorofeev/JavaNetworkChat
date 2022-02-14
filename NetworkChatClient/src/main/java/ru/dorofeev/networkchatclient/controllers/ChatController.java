@@ -1,6 +1,7 @@
 package ru.dorofeev.networkchatclient.controllers;
 
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.scene.control.TextInputDialog;
 import ru.dorofeev.networkchatclient.ChatApplication;
 import ru.dorofeev.networkchatclient.client.Client;
@@ -61,6 +62,14 @@ public class ChatController {
         });
     }
 
+    public void initHistory(IHistoryService history, String login) {
+        this.history = history;
+        this.history.init(login);
+        for (String message : this.history.loadFromHistory(100)) {
+            textAreaChat.appendText(message + System.lineSeparator());
+        }
+    }
+
     public void setApplication(ChatApplication application) {
         this.application = application;
     }
@@ -112,17 +121,19 @@ public class ChatController {
         }
     }
 
+    @FXML
+    public void onActionExit() {
+        application.getChatStage().close();
+        application.exitApplication();
+    }
+
     private void appendMessage(String sender, String message) {
         String formattedMessage = DateFormat.getDateTimeInstance().format(new Date()) + " " + sender + ": " + message + System.lineSeparator();
         textAreaChat.appendText(formattedMessage);
         history.saveMessageToHistory(formattedMessage);
     }
 
-    public void initHistory(IHistoryService history, String login) {
-        this.history = history;
-        this.history.init(login);
-        for (String message : this.history.loadFromHistory(100)) {
-            textAreaChat.appendText(message + System.lineSeparator());
-        }
+    public void onActionAbout() {
+        application.showInfo("Онлайн-чат - локальный сетевой чат, демо-приложение для обучения на курсе Java");
     }
 }

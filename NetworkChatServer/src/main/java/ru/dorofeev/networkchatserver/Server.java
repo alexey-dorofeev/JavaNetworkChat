@@ -15,19 +15,21 @@ public class Server {
 
     private final int port;
     private final IAuthService authService;
-    private final List<ClientHandler> clientHandlers = new ArrayList<>();
-    private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private final List<ClientHandler> clientHandlers;
+    private final ExecutorService executorService;
 
     public Server(int port, IAuthService authService) {
         this.port = port;
         this.authService = authService;
+        this.clientHandlers = new ArrayList<>();
+        this.executorService = Executors.newCachedThreadPool();
     }
 
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Сервер чата запущен");
 
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
                 processClientConnection(serverSocket);
             }
 
@@ -88,7 +90,7 @@ public class Server {
 
     public boolean isAlreadyAuth(String login) {
         for (ClientHandler client : clientHandlers) {
-            if (client.getUser().getUserName().equals(login)) {
+            if (client.getUser().getLogin().equals(login)) {
                 return true;
             }
         }

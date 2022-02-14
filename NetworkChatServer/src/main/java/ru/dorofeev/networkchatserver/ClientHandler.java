@@ -57,7 +57,7 @@ public class ClientHandler {
         Future<?> future = executor.submit(() -> {
             try {
                 System.out.println("Ожидаем аутентификации клиента...");
-                while (true) {
+                while (!Thread.currentThread().isInterrupted()) {
 
                     Command command = readCommand();
                     if (command == null) {
@@ -119,7 +119,7 @@ public class ClientHandler {
 
     private void waitCommands() throws IOException {
         System.out.printf("Ожидаем сообщений от клиента %s...%n", user.getUserName());
-        while (true) {
+        while (!Thread.currentThread().isInterrupted()) {
 
             Command command = readCommand();
             if (command == null) {

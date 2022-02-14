@@ -5,9 +5,6 @@
 <?import javafx.scene.text.*?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.dorofeev.networkchatclient.controllers.ChatController">
-   <top>
-      <Label text="Онлайн-чат" BorderPane.alignment="CENTER" />
-   </top>
    <center>
       <TextArea fx:id="textAreaChat" editable="false" focusTraversable="false" prefHeight="400.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
    </center>
@@ -26,11 +23,22 @@
       </VBox>
    </bottom>
    <left>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-         <children>
-            <Button mnemonicParsing="false" onAction="#onActionChangeUserName" prefHeight="25.0" prefWidth="107.0" text="Изменить ник" textAlignment="CENTER" />
-            <ListView fx:id="listViewChatUsers" focusTraversable="false" />
-         </children>
-      </VBox>
+       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+           <ListView fx:id="listViewChatUsers" focusTraversable="false"/>
+       </VBox>
    </left>
+   <top>
+       <VBox prefHeight="42.0" BorderPane.alignment="CENTER">
+           <MenuBar>
+               <Menu mnemonicParsing="false" text="Файл">
+                   <MenuItem mnemonicParsing="false" onAction="#onActionChangeUserName"
+                             text="Изменить имя пользователя..."/>
+                   <MenuItem mnemonicParsing="false" onAction="#onActionExit" text="Выйти"/>
+               </Menu>
+               <Menu mnemonicParsing="false" text="О программе">
+                   <MenuItem mnemonicParsing="false" onAction="#onActionAbout" text="О программе"/>
+               </Menu>
+           </MenuBar>
+       </VBox>
+   </top>
 </BorderPane>

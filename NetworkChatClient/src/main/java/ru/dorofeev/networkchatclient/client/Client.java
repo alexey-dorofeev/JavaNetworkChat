@@ -41,11 +41,9 @@ public class Client {
 
     public Thread startReadMessagesProcess() {
         Thread thread = new Thread(() -> {
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
                 try {
-                    if (Thread.currentThread().isInterrupted()) {
-                        break;
-                    }
+
                     Command command = readCommand();
                     if (command == null) {
                         continue;
